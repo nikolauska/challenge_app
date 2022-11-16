@@ -22,8 +22,20 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+let hooks = {}
+
+// Setup page visiblity hook which will tell server if user no longer
+// has page visible
+hooks.PageVisibility = {
+  mounted() {
+    document.addEventListener("visibilitychange", () => {
+      this.pushEvent("visibility", { state: document.visibilityState });
+    });
+  }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks })
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})

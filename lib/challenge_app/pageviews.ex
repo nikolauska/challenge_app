@@ -6,99 +6,35 @@ defmodule ChallengeApp.Pageviews do
   import Ecto.Query, warn: false
   alias ChallengeApp.Repo
 
+  alias ChallengeApp.Sessions.Session
   alias ChallengeApp.Pageviews.Pageview
 
   @doc """
-  Returns the list of pageviews.
-
-  ## Examples
-
-      iex> list_pageviews()
-      [%Pageview{}, ...]
-
+  Create new pageview
   """
-  def list_pageviews do
-    Repo.all(Pageview)
-  end
-
-  @doc """
-  Gets a single pageview.
-
-  Raises `Ecto.NoResultsError` if the Pageview does not exist.
-
-  ## Examples
-
-      iex> get_pageview!(123)
-      %Pageview{}
-
-      iex> get_pageview!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_pageview!(id), do: Repo.get!(Pageview, id)
-
-  @doc """
-  Creates a pageview.
-
-  ## Examples
-
-      iex> create_pageview(%{field: value})
-      {:ok, %Pageview{}}
-
-      iex> create_pageview(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_pageview(attrs \\ %{}) do
+  def create(%Session{} = session, view) when is_binary(view) do
     %Pageview{}
-    |> Pageview.changeset(attrs)
-    |> Repo.insert()
+    |> Pageview.changeset(%{session_id: session.id, view: view, engagement_time: 0})
+    |> Repo.insert!()
   end
 
   @doc """
-  Updates a pageview.
-
-  ## Examples
-
-      iex> update_pageview(pageview, %{field: new_value})
-      {:ok, %Pageview{}}
-
-      iex> update_pageview(pageview, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  Update engagement time with seconds
   """
-  def update_pageview(%Pageview{} = pageview, attrs) do
-    pageview
-    |> Pageview.changeset(attrs)
-    |> Repo.update()
-  end
+  def update_engagement(%Pageview{} = pageview, seconds)
+      when is_integer(seconds) and seconds > 0 do
+    # Pageview should never be updated other than session
+    # In case this is not a case we want to get the latest value from database and add to it
+    # TODO: Maybe there is a solution in the changeset for this usecase?
+    Repo.query!(
+      """
+      update pageviews
+      set engagement_time = engagement_time + $1::integer
+      where id = $2::bigint
+      """,
+      [seconds, pageview.id]
+    )
 
-  @doc """
-  Deletes a pageview.
-
-  ## Examples
-
-      iex> delete_pageview(pageview)
-      {:ok, %Pageview{}}
-
-      iex> delete_pageview(pageview)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_pageview(%Pageview{} = pageview) do
-    Repo.delete(pageview)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking pageview changes.
-
-  ## Examples
-
-      iex> change_pageview(pageview)
-      %Ecto.Changeset{data: %Pageview{}}
-
-  """
-  def change_pageview(%Pageview{} = pageview, attrs \\ %{}) do
-    Pageview.changeset(pageview, attrs)
+    Repo.get(Pageview, pageview.id)
   end
 end

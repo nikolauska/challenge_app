@@ -4,7 +4,7 @@ defmodule ChallengeApp.Repo.Migrations.CreatePageviews do
   def change do
     create table(:pageviews) do
       add :view, :text
-      add :engagement_time, :time
+      add :engagement_time, :integer
       add :session_id, references(:sessions, on_delete: :nothing)
 
       timestamps()

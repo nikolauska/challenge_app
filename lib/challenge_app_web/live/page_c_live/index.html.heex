@@ -1,0 +1,46 @@
+<ul class="nav nav-tabs flex flex-col md:flex-row flex-wrap list-none border-b-0 pl-0 mb-4" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a href="#" phx-click="set_tab" phx-value-tab="1" class="
+      nav-link
+      w-full
+      block
+      font-medium
+      text-xs
+      leading-tight
+      uppercase
+      border-x-0 border-t-0 border-b-2 border-transparent
+      px-6
+      py-3
+      my-2
+      hover:border-transparent hover:bg-gray-100
+      focus:border-transparent
+      active
+    "
+      aria-selected="true">Tab 1</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a phx-click="set_tab" phx-value-tab="2" class="
+      nav-link
+      w-full
+      block
+      font-medium
+      text-xs
+      leading-tight
+      uppercase
+      border-x-0 border-t-0 border-b-2 border-transparent
+      px-6
+      py-3
+      my-2
+      hover:border-transparent hover:bg-gray-100
+      focus:border-transparent
+    ">Tab 2</a>
+  </li>
+</ul>
+
+<%= if @tab == "1" do %>
+  <.live_component module={ChallengeAppWeb.Tabs.Tab1} id="tab_1"/>
+<% end %>
+
+<%= if @tab == "2" do %>
+  <.live_component module={ChallengeAppWeb.Tabs.Tab2} id="tab_2" />
+<% end %>

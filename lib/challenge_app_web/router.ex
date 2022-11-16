@@ -20,8 +20,22 @@ defmodule ChallengeAppWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ChallengeAppWeb do
-  #   pipe_through :api
-  # end
+  scope "/page_a", ChallengeAppWeb do
+    pipe_through :browser
+
+    live "/", PageALive.Index, :index
+  end
+
+  scope "/page_b", ChallengeAppWeb do
+    pipe_through :browser
+
+    live "/", PageBLive.Index, :index
+  end
+
+  scope "/page_c", ChallengeAppWeb do
+    pipe_through :browser
+
+    live "/", PageCLive.Index, :index
+    live "/tab_:tab", PageCLive.Index, :index
+  end
 end

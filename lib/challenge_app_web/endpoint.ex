@@ -1,17 +1,23 @@
 defmodule ChallengeAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :challenge_app
 
+  # Defines session token max age to make it live longer
+  # than just the default session
+  # Current value is set to 50 years in seconds
+  @session_max_age 1577880000
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
     key: "_challenge_app_key",
+    max_age: @session_max_age,
     signing_salt: "+Bo2RPcj",
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [:peer_data, :user_agent, session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #

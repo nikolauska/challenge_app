@@ -63,6 +63,7 @@ defmodule ChallengeAppWeb do
       use Phoenix.LiveComponent
 
       unquote(html_helpers())
+      unquote(verified_routes())
     end
   end
 

@@ -9,96 +9,29 @@ defmodule ChallengeApp.Sessions do
   alias ChallengeApp.Sessions.Session
 
   @doc """
-  Returns the list of sessions.
-
-  ## Examples
-
-      iex> list_sessions()
-      [%Session{}, ...]
-
+  Get or create session
   """
-  def list_sessions do
-    Repo.all(Session)
+  def get_or_create(session_id, user_agent)
+      when is_binary(session_id) and is_binary(user_agent) do
+    case get(session_id) do
+      nil -> create!(session_id, user_agent)
+      session -> session
+    end
   end
 
   @doc """
-  Gets a single session.
-
-  Raises `Ecto.NoResultsError` if the Session does not exist.
-
-  ## Examples
-
-      iex> get_session!(123)
-      %Session{}
-
-      iex> get_session!(456)
-      ** (Ecto.NoResultsError)
-
+  Get session with session_id
   """
-  def get_session!(id), do: Repo.get!(Session, id)
+  def get(session_id) when is_binary(session_id) do
+    Repo.get_by(Session, session_id: session_id)
+  end
 
   @doc """
-  Creates a session.
-
-  ## Examples
-
-      iex> create_session(%{field: value})
-      {:ok, %Session{}}
-
-      iex> create_session(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  Get session with session_id
   """
-  def create_session(attrs \\ %{}) do
+  def create!(session_id, user_agent) when is_binary(session_id) and is_binary(user_agent) do
     %Session{}
-    |> Session.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a session.
-
-  ## Examples
-
-      iex> update_session(session, %{field: new_value})
-      {:ok, %Session{}}
-
-      iex> update_session(session, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_session(%Session{} = session, attrs) do
-    session
-    |> Session.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a session.
-
-  ## Examples
-
-      iex> delete_session(session)
-      {:ok, %Session{}}
-
-      iex> delete_session(session)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_session(%Session{} = session) do
-    Repo.delete(session)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking session changes.
-
-  ## Examples
-
-      iex> change_session(session)
-      %Ecto.Changeset{data: %Session{}}
-
-  """
-  def change_session(%Session{} = session, attrs \\ %{}) do
-    Session.changeset(session, attrs)
+    |> Session.changeset(%{session_id: session_id, user_agent: user_agent})
+    |> Repo.insert!()
   end
 end
