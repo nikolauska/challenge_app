@@ -8,14 +8,12 @@ defmodule ChallengeAppWeb.PageALive.Index do
   # load the same module name with __MODULE__
   @view "#{__MODULE__}"
 
-  on_mount({PageHooks, :session})
-
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, session, socket) do
     socket =
       socket
       |> assign(:page_title, "Page A")
-      |> PageHooks.assign_defaults(@view)
+      |> PageHooks.on_mount(params, session, @view)
 
     {:ok, socket}
   end

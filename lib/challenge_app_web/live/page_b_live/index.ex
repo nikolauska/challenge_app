@@ -3,20 +3,17 @@ defmodule ChallengeAppWeb.PageBLive.Index do
 
   alias ChallengeApp.Sessions
   alias ChallengeAppWeb.PageHooks
-  alias Phoenix.Socket.Message
 
   # Store view as static string so we don't need to constantly
   # load the same module name with __MODULE__
   @view "#{__MODULE__}"
 
-  on_mount({PageHooks, :session})
-
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, session, socket) do
     socket =
       socket
       |> assign(:page_title, "Page B")
-      |> PageHooks.assign_defaults(@view)
+      |> PageHooks.on_mount(params, session, @view)
 
     {:ok, socket}
   end

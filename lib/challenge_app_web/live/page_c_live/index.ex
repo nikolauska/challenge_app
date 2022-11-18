@@ -11,27 +11,25 @@ defmodule ChallengeAppWeb.PageCLive.Index do
   # load the same module name with __MODULE__
   @view "#{__MODULE__}"
 
-  on_mount({PageHooks, :session})
-
   @impl true
-  def mount(%{"tab" => tab}, _session, socket) when tab in @tabs do
+  def mount(%{"tab" => tab} = params, session, socket) when tab in @tabs do
     socket =
       socket
       |> assign(:page_title, "Page C, Tab #{tab}")
       |> assign(:tab, tab)
-      |> PageHooks.assign_defaults(@view)
+      |> PageHooks.on_mount(params, session, @view)
 
     {:ok, socket}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(params, session, socket) do
     tab = Enum.random(@tabs)
 
     socket =
       socket
       |> assign(:page_title, "Page C, Tab #{tab}")
       |> assign(:tab, tab)
-      |> PageHooks.assign_defaults(@view)
+      |> PageHooks.on_mount(params, session, @view)
       |> push_redirect(to: ~p"/page_c/tab_#{tab}", replace: true)
 
     {:ok, socket}

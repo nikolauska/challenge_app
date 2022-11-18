@@ -8,17 +8,28 @@ defmodule ChallengeAppWeb.PageHooks do
   alias ChallengeApp.Sessions
   alias ChallengeApp.Pageviews
 
-  def on_mount(:session, _params, %{"_csrf_token" => token}, socket) do
+  def on_mount(socket, _params, %{"_csrf_token" => token}, view) do
     session = Sessions.get_or_create(token, get_connect_info(socket, :user_agent))
 
-    {:cont, assign(socket, :session, session)}
-  end
-
-  def assign_defaults(socket, view) do
     socket
-    |> assign(:pageview, Pageviews.create(socket.assigns.session, view))
+    |> assign(:session, session)
+    |> assign(:pageview, Pageviews.create(session, view))
     |> assign(:time, NaiveDateTime.local_now())
     |> assign(:hidden, false)
+  end
+
+  def on_mount(socket, _params, _session, _view) do
+    # This happens on initial join from new user until we get the csrf token
+    socket
+    |> assign(:session, nil)
+    |> assign(:pageview, nil)
+    |> assign(:time, NaiveDateTime.local_now())
+    |> assign(:hidden, false)
+  end
+
+  def on_hidden(%{assigns: %{pageview: nil}} = socket) do
+    socket
+    |> assign(:hidden, true)
   end
 
   def on_hidden(socket) do
@@ -36,7 +47,7 @@ defmodule ChallengeAppWeb.PageHooks do
   end
 
   def on_terminate(_reason, socket) do
-    if not socket.assigns.hidden do
+    if not socket.assigns.hidden and not is_nil(socket.assigns.pageview) do
       seconds = NaiveDateTime.diff(NaiveDateTime.local_now(), socket.assigns.time)
 
       # We might crash without
