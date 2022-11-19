@@ -3,7 +3,7 @@ defmodule ChallengeAppWeb.Tabs.Tab2 do
 
   def render(assigns) do
     ~H"""
-    <a phx-click="redirect" phx-value-to={~p"/page_a"}>A</a>
+    <a href={~p"/page_a"}>A</a>
     """
   end
 end

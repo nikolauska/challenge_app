@@ -1,7 +1,6 @@
 defmodule ChallengeAppWeb.PageCLive.Index do
   use ChallengeAppWeb, :live_view
 
-  alias ChallengeApp.Pageviews
   alias ChallengeAppWeb.PageHooks
 
   # Allowed tab numbers for page c
@@ -47,13 +46,6 @@ defmodule ChallengeAppWeb.PageCLive.Index do
   end
 
   @impl true
-  def handle_event("redirect", %{"to" => to}, socket) do
-    PageHooks.on_terminate(:normal, socket)
-
-    {:noreply, push_redirect(socket, to: to)}
-  end
-
-  @impl true
   def handle_event("visibility", %{"state" => "hidden"}, socket) do
     {:noreply, PageHooks.on_hidden(socket)}
   end
@@ -61,10 +53,5 @@ defmodule ChallengeAppWeb.PageCLive.Index do
   @impl true
   def handle_event("visibility", %{"state" => "visible"}, socket) do
     {:noreply, PageHooks.on_visible(socket)}
-  end
-
-  @impl true
-  def terminate(reason, socket) do
-    PageHooks.on_terminate(reason, socket)
   end
 end

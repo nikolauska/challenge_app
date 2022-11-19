@@ -15,9 +15,9 @@ defmodule ChallengeApp.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: ChallengeApp.PubSub},
       # Start the Endpoint (http/https)
-      ChallengeAppWeb.Endpoint
+      ChallengeAppWeb.Endpoint,
       # Start a worker by calling: ChallengeApp.Worker.start_link(arg)
-      # {ChallengeApp.Worker, arg}
+      {ChallengeApp.PageMonitor.Supervisor, [name: ChallengeApp.PageMonitor.Supervisor]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
